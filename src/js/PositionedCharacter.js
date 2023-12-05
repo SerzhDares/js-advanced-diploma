@@ -6,9 +6,9 @@ export default class PositionedCharacter {
       throw new Error('character must be instance of Character or its children');
     }
 
-    if (typeof position !== 'number') {
-      throw new Error('position must be a number');
-    }
+    // if (typeof position !== 'number') {
+    //   throw new Error('position must be a number');
+    // }
 
     this.character = character;
     this.position = position;

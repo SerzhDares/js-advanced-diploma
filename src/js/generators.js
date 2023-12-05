@@ -30,8 +30,8 @@ export function generateTeam(allowedTypes, maxLevel, characterCount) {
   // TODO: write logic here
   const team = new Team();
   for (let i = 0; i < characterCount; i++) {
-    team.add(characterGenerator(allowedTypes, maxLevel));
+    team.add(characterGenerator(allowedTypes, maxLevel).next().value);
   }
 
-  return team;
+  return team.toArray();
 }

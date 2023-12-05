@@ -13,13 +13,18 @@
  * vampire
  */
 export default class Character {
-  constructor(level, type = 'generic') {
+  constructor(level, attack, defence, type, stepRadius, attackRadius) {
     this.level = level;
-    this.attack = 0;
-    this.defence = 0;
+    this.attack = attack;
+    this.defence = defence;
     this.health = 50;
     this.type = type;
+    this.stepRadius = stepRadius;
+    this.attackRadius = attackRadius;
+    
     // TODO: выбросите исключение, если кто-то использует "new Character()"
-    if (new.target.name === Character) throw new Error('Запрещено создавать объекты через new Character(level)');
+    if (new.target.name === 'Character') {
+      throw new Error('Запрещено создавать объекты через new Character(level)');
+    }
   }
 }
