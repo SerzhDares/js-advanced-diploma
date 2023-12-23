@@ -79,6 +79,7 @@ export default class GameController {
         this.gamePlay.selectCell(index);
         this.gameState.selectedHero = characterInCell;
         this.gameState.heroAllowedSteps = this.allowedStep(index, characterInCell.character);
+        this.gameState.heroAllowedAttack = this.allowedAttack(index, characterInCell.character);
       } 
       if (hero === 'daemon' || hero === 'undead' || hero === 'vampire') {
         GamePlay.showError('Выберите персонажа своей команды!');
@@ -108,7 +109,7 @@ export default class GameController {
         this.gamePlay.selectCell(index, 'green');
       } else if (characterInCell) {
         const hero = characterInCell.character.type;
-        if (this.gameState.heroAllowedSteps.includes(index) && (hero === 'daemon' || hero === 'undead' || hero === 'vampire')) {
+        if (this.gameState.heroAllowedAttack.includes(index) && (hero === 'daemon' || hero === 'undead' || hero === 'vampire')) {
           this.gamePlay.setCursor('crosshair');
           this.gamePlay.selectCell(index, 'red');
         }
@@ -135,15 +136,11 @@ export default class GameController {
   }
 
   allowedStep(index, hero) {
-    // const topAllowedSteps = [];
-    // const bottomAllowedSteps = [];
+
     const allowedSteps = [];
     const leftAllowedSteps = [];
     const rightAllowedSteps = [];
-    // const topRightDiagonalAllowedSteps = [];
-    // const topLeftDiagonalAllowedSteps = [];
-    // const bottomRightDiagonalAllowedSteps = [];
-    // const bottomLeftDiagonalAllowedSteps = [];
+    
     for (let i = 1; i <= hero.stepRadius; i++) {
       const topCell = index - 8 * i;
       const bottomCell = index + 8 * i;
@@ -179,28 +176,58 @@ export default class GameController {
       }
     }
 
-    // console.log(topAllowedSteps);
-    // console.log(bottomAllowedSteps);
-    console.log(allowedSteps);
-    console.log(leftAllowedSteps);
-    console.log(rightAllowedSteps);
-    // console.log(topLeftDiagonalAllowedSteps);
-    // console.log(topRightDiagonalAllowedSteps);
-    // console.log(bottomRightDiagonalAllowedSteps);
-    // console.log(bottomLeftDiagonalAllowedSteps);
-    
-    // return [
-    //   ...topAllowedSteps, ...bottomAllowedSteps, 
-    //   ...leftAllowedSteps, ...rightAllowedSteps, 
-    //   ...topLeftDiagonalAllowedSteps, ...topRightDiagonalAllowedSteps, 
-    //   ...bottomRightDiagonalAllowedSteps, ...bottomLeftDiagonalAllowedSteps,
-    // ];
-
     return [...allowedSteps, ...leftAllowedSteps, ...rightAllowedSteps];
   }
 
   allowedAttack(index, hero) {
+    
+    const allowedAttack = [];
+    const leftAllowedAttack = [];
+    const rightAllowedAttack = [];
+    
+    for (let i = 1; i <= hero.attackRadius; i++) {
+      const topCell = index - 8 * i;
+      const bottomCell = index + 8 * i;
+      const leftCell = index - i;
+      const rightCell = index + i;
+      if (topCell >= 0) {
+        allowedAttack.push(topCell);
+      }
+      if (bottomCell <= 63) {
+        allowedAttack.push(bottomCell);
+      }
+      if ((index % 8 !== 0) && (leftAllowedAttack[0] % 8 !== 0)) {
+        leftAllowedAttack.push(leftCell);
+      }
+      if (((index + 1) % 8 !== 0) && ((rightAllowedAttack[0] + 1) % 8 !== 0)) {
+        rightAllowedAttack.push(rightCell);
+      }
+    }
 
+    for (let j = 1; j <= hero.attackRadius; j++) {
+      for (let k = 0; k <= leftAllowedAttack.length - 1; k++) {
+        const topLeftCell = leftAllowedAttack[k] - 8 * j;
+        const bottomLeftCell = leftAllowedAttack[k] + 8 * j;
+        if (topLeftCell >= 0) {
+          allowedAttack.push(topLeftCell);
+        }
+        if (bottomLeftCell <= 63) {
+          allowedAttack.push(bottomLeftCell);
+        }
+      }
+
+      for (let l = 0; l <= rightAllowedAttack.length - 1; l++) {
+        const topRightCell = rightAllowedAttack[l] - 8 * j;
+        const bottomRightCell = rightAllowedAttack[l] + 8 * j;
+        if (topRightCell >= 0) {
+          allowedAttack.push(topRightCell);
+        }
+        if (bottomRightCell <= 63) {
+          allowedAttack.push(bottomRightCell);
+        }
+      }
+    }
+
+    return [...allowedAttack, ...leftAllowedAttack, ...rightAllowedAttack];
   }
-
 }
